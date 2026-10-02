@@ -1,5 +1,5 @@
 ﻿# Ecommerce-webapplication
-mern-store/
+mern-stack-store/
 
 ├── backend/
 │   ├── config/
