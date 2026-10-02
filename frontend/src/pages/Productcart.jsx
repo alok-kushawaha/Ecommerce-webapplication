@@ -12,7 +12,9 @@ export default function Productcart() {
   const { userid, token } = useSelector((state) => state.login)
 
 
-  const products = useSelector((state) => state.product.items);
+  const productItems = useSelector((state) => state.product.items);
+  const productError = useSelector((state) => state.product.error);
+  const products = Array.isArray(productItems) ? productItems : [];
   const cart = useSelector((state) => state.cart.items)
 
   useEffect(() => {
@@ -34,6 +36,11 @@ export default function Productcart() {
         <p className="mt-1 text-sm text-gray-500">
           Find something you'll love.
         </p>
+        {productError && (
+          <p role="alert" className="mt-3 text-sm text-red-700">
+            Products could not be loaded. Check the API URL and backend availability.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-6 p-20">

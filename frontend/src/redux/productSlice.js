@@ -1,10 +1,17 @@
 import { createAsyncThunk, createSlice, nanoid, } from '@reduxjs/toolkit';
 import api from '../api/axios';
 
-export const fatchProduct = createAsyncThunk("products", async () => {
-
-    const respons = await api.get('/getallproduct');
-    return respons.data.getallproduct;
+export const fatchProduct = createAsyncThunk("products", async (_, { rejectWithValue }) => {
+    try {
+        const response = await api.get('/getallproduct');
+        const products = response.data?.getallproduct;
+        if (!response.data?.success || !Array.isArray(products)) {
+            return rejectWithValue(response.data?.message || "Unable to load products");
+        }
+        return products;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || "Unable to connect to the product service");
+    }
 })
 export const fatchProductid = createAsyncThunk("productid", async (id) => {
     const respons = await api.get(`/getproductbyid/${id}`);
@@ -28,9 +35,18 @@ const productsSlice = createSlice({
         // builder.addCase(fatchProduct.pending,(state)=>{
         //     state.status="loading";
         // })
-        builder.addCase(fatchProduct.fulfilled, (state, action) => {
-            state.status = "succesful",
-                state.items = action.payload;
+        builder.addCase(fatchProduct.pending, (state) => {
+            state.status = "loading";
+            state.error = null;
+        })
+        .addCase(fatchProduct.fulfilled, (state, action) => {
+            state.status = "successful";
+            state.items = action.payload;
+        })
+        .addCase(fatchProduct.rejected, (state, action) => {
+            state.status = "failed";
+            state.error = action.payload || action.error.message;
+            state.items = [];
          //   console.log(state.items)
 
         })
