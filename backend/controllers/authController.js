@@ -34,9 +34,10 @@ export const signup = async (req, res) => {
       user: newUser,
     });
   } catch (error) {
-    res.send({
+    console.error("Signup failed:", error);
+    return res.status(500).send({
       success: false,
-      message: "error in signup page",
+      message: "Unable to create account. Please try again later.",
     });
   }
 };
